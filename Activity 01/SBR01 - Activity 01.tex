@@ -1,0 +1,140 @@
+\documentclass[titlepage, letterpaper, fleqn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{extramarks}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{caption}
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+
+%
+% You should change this things~
+%
+
+\newcommand{\mahteacher}{Dr. Santiago Enrique Conant Pablos}
+\newcommand{\mahclass}{Sistemas Inteligentes}
+\newcommand{\mahtitle}{Actividad 01}
+\newcommand{\mahdate}{19 de agosto de 2016}
+\newcommand{\spacepls}{\vspace{5mm}}
+\newcommand{\qed}{\displaystyle{\, \, \blacksquare}}
+
+\renewcommand{\familydefault}{\sfdefault} % sans-serif font?
+\bibliographystyle{abbrv} % Bibliography style?
+\setlength\parindent{0pt} % Paragraph indentation
+\setlength\parskip{1.5ex} % Space after/before paragraph
+\renewcommand{\baselinestretch}{1.3}
+
+%
+% Header markings
+%
+
+\pagestyle{fancy}
+\lhead{01170065 - Xavier Sánchez}
+\chead{}
+\rhead{01299000 - Erim Sezer}
+\lfoot{}
+\rfoot{}
+
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+%
+% Alias for the new definition section
+%
+
+\newcommand{\defy}[1]{
+	\textbf{#1} % no space
+}
+
+\newcommand{\defys}[1]{
+	\spacepls % with space
+	\textbf{#1}
+}
+
+%
+% My actual info
+%
+
+\title{
+    \vspace{1in}
+    \textbf{Tecnológico de Monterrey} \\
+    \vspace{0.5in}
+    \textmd{\mahclass} \\
+    \large{\textit{\mahteacher}} \\
+    \vspace{0.5in}
+    \textsc{\mahtitle}
+    \author{01170065  - MIT \\
+    Xavier Sánchez \\
+    \texttt{xavier.sanchezdz@gmail.com}
+    \and
+    01299000 - MSM \\
+    Erim Sezer \\
+    \texttt{erimsezer@gmail.com}
+    }
+    \date{\mahdate}
+}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+
+%
+% Actual document starts here~
+%
+
+\section{Definitions}
+\label{sec:defs}
+
+\defy{Autonomous Agent}
+
+An autonomous agent is an entity that makes its own choices, with no influence of a leader or a global plan.
+Autonomous agents need a way to perceive the environment and to process its information in order to calculate an action~\cite{Shiffman}.
+
+An example of an autonomous agent would be a human being. They have a way to perceive, process information and take decisions. In principle, all human beings are autonomous.
+
+\defys{Strong AI vs Weak AI}
+
+Weak AI is defined as the hypothesis that machines could act as if they thought.
+
+A strong AI is, on the other hand, the hypothesis that machines actually think, not just simulate the thinking process~\cite{StrongAI}.
+
+A weak AI example would be any piece of adaptive software, simulating learning.
+
+A strong AI example can only be found in movies, like an android that is actually sentient, aware of its existence and its actions.
+
+\defys{P Problem vs P Problem}
+
+In computer science, problems are classified according to their complexity, depending on how much time is actually needed to solve them.
+
+A problem is said to be a \textbf{P} problem (polynomial time) if it's solved in polynomial time. This means that there is at least one algorithm to solve it, such that the number of steps of the algorithm is bounded by a polynomial in \(n\), where \(n\) is the number of inputs for the problem~\cite{PProblem}.
+
+A problem is said to be a \textbf{NP} problem if it is solvable in polynomial time by a non-deterministic (parallel) Turing machine~\cite{NPProblem}.
+
+\textbf{TODO}
+
+\begin{itemize}
+	\item Computational Intelligence
+	\item Markov Decision Process
+	\item Cognitive Science
+	\item Heuristic
+	\item Technological singularity
+	\item Big Data
+	\item Ontology
+\end{itemize}
+
+\bibliography{biblio}
+
+\end{document}
