@@ -192,6 +192,42 @@ a particular theory of the nature of existence, what exists in the world designe
 
 The PEAS description of an agent can be seen as the ontology of its world.
 
+\section{Intelligent Agents formulation}
+\label{sec:agent}
+
+The intelligent agent proposed in this section is an administrative helper which aids the user to plan, manage and complete research tasks efficiently by letting them focus on things that do matter.
+This administrative AI will be called \textbf{ALiCE}, which stands for Administrative Liaison Controlled Environment.
+With ALiCE, Petty tasks like handling meetings and setting deadlines, file management, document formatting or data analytics on the ongoing project will need less attentions from the user.
+Via behavior analysis, ALiCE will learn which things matter and which don't, as well as when is the best moment to remind the user of important events or upcoming reports.
+
+\textbf{Performance} will be measured with both explicit feedback (via satisfaction surveys) and by analyzing job completion (progress per hour, time invested on tasks, idle time).
+
+The \textbf{environment} will consist of all the jobs, tasks, events and goals the user create, as well as all the files in the working directory.
+
+All ALiCE's functions and features will be its \textbf{actuators}. ALiCE will be modifying the environment by displaying notifications on the screen, writing files and sending emails through the network.
+
+ALiCE will receive information about the environment via keystrokes, click and touch gestures, and some voice commands. This means that the keyboard, mouse (or touchscreen if in any mobile device) and microphone will be ALiCE's \textbf{sensors}.
+
+Due its nature as a software package, ALiCE will be aware of all the environment described (files, emails, deadlines, etc).
+All actions will modify this \textbf{fully-observable} environment, but not files outside ALiCE's reach/permissions nor tasks that were not described by the user, as these elements are not considered as part of the environment and ALiCE is not aware of them.
+
+The environment will be considered as \textbf{strategic}, for all environment states will be determined by both the user's and ALiCE's actions as there are no stochastic or random events in it.
+This is why the environment is also considered to be \textbf{dynamic}, as it is modified even without ALiCE's actions.
+
+As a \textbf{learning agent}, ALiCE training and behavior analysis will consider all actions of the user.
+This means that the environment will be \textbf{sequential}. A snapshot of the environment is meaningless by its own for ALiCE's recommendation system.
+
+As most software bots, ALiCE works in a \textbf{discrete} environment, with limited actions and input commands. However, additional commands but not perceptions could also be created via user input.
+
+Finally, the environment considers ALiCE as the only agent, so it's a \textbf{single-agent} environment.
+This doesn't mean integration with other softbots is implausible in the future.
+
+A \textbf{learning-agent architecture} is needed for ALiCE's core functions.
+Performance standards will be updated using its critic element, by analyzing times, completion rates and via direct feedback (surveys).
+This feedback will allow the learning element to generate changes on ALiCE's behavior, and thus influencing its performance.
+
+In order to label an action as valid or as a good suggestion, ALiCE's problem generator element need to simulate situations in which it can expand its knowledge about the environment. The training sessions should include some of these situations in order for ALiCE to learn the user's preferences.
+
 \bibliography{biblio}
 
 \end{document}
