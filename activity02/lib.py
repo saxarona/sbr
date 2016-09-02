@@ -171,7 +171,7 @@ def test_hex_arithmetic():
     equal_hex("hex_subtract", Hex(-2, 4, -2), hex_subtract(Hex(1, -3, 2), Hex(3, -7, 4)))
 
 def test_hex_direction():
-    equal_hex("hex_direction", Hex(0, -1, 1), hex_direction(2))
+    print(equal_hex("hex_direction", Hex(0, -1, 1), hex_direction(2)))
 
 def test_hex_neighbor():
     equal_hex("hex_neighbor", Hex(1, -3, 2), hex_neighbor(Hex(1, -2, 1), 2))
@@ -238,4 +238,3 @@ def test_all():
 
 
 test_all()
-
