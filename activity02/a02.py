@@ -70,13 +70,15 @@ class Hexagon(Problem):
         
         print("Path was:",mah_path)
 
-        print("""
-            _ _ 1 _ 1 _ 1 _ _
-            _ 1 _ 1 _ 1 _ 1 _
-            1 _ 1 _ 1 _ 1 _ 1
-            _ 1 _ 1 _ 1 _ 1 _
-            _ _ 1 _ 1 _ 1 _ _
-            """)
+        # This was actually a placeholder, since we wanted to add
+        # a way to visualize movement
+        # print("""
+        #     _ _ 1 _ 1 _ 1 _ _
+        #     _ 1 _ 1 _ 1 _ 1 _
+        #     1 _ 1 _ 1 _ 1 _ 1
+        #     _ 1 _ 1 _ 1 _ 1 _
+        #     _ _ 1 _ 1 _ 1 _ _
+        #     """)
 
 
     def actions(self, state, mode='hex'):
