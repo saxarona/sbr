@@ -1,6 +1,6 @@
 """Calcudoku Light
 
-A01540717 - Xavier Sánchez
+A01170065 - Xavier Sánchez
 A01299000 - Erim Sezer
 
 The Calcudoku Light is described as a CSP:
