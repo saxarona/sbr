@@ -8,27 +8,6 @@ This is the Othello (Reversi) game.
 This implementation needs to run alpha_beta_search function from
 the games module.
 
-We use the same convention used in AIMA:
-- actions in lowercase.
-- states in UPPERCASE.
-
-We need some basic stuff for the game to work:
-- The state as a string, like 'A'.
-- The actions in a LIST.
-
-The available MINIMAX tree is a dictionary of dictionaries:
-each state is a dictionary that maps actions (keys) to states (values).
-Since this is a map inside a map, a useful way to get to the actions
-can be seen in the Fig52Game class, in the games module:
-
->>> list(mydict.get(state, {}).keys())
-
-This will get all keys (actions) of a state, or get an empty dictionary
-if state has no available actions.
-
-The utilities of all states can be stored in another dictionary
-that maps states to its utility.
-
 The board of the game is a dictionary that maps a cell (x,y)
 to its player: {(x,y) : Player}, where Player is WHITE or BLACK.
 
@@ -51,13 +30,33 @@ If a cell is in (x,y), then:
 - SW is (x-1, y+1)
 - W is (x-1, y)
 - NW is (x-1, y-1)
+
+The heuristic function was calculated as:
+
+h = my_pieces + my_moves + 3 * my_gains - dangerous_places * my_losses / 2
+
+Where:
+- my_pieces is the number of pieces I got on the board now.
+- my_moves is number of available moves I've got for my next turn.
+- my_gains is the number of pieces converted to my color after my best move,
+multiplied by 3.
+- dangerous_places are number of valid, empty spaces next to my pieces.
+- my_losses is an estimate of the worst case scenario for my opponent's next turn.
+
+dangerous_places is multiplied by my_losses, and then divided by 2 in order
+to get the average, like "how dangerous is my next opponent's move".
+
+Many helper functions were created in order to ease up the search of
+available moves. For example, we include functions to look for neighbors,
+to decode strings to directions, and get the direction from a cell to another.
+Some of these functions have a prediction mode used for the calculation of utilities.
 """
 
 # TODO
-# Validate actions--DONE!
-# Implement actions and changes
-# Create heuristic function
-# Calculate Utilities
+# Validate actions -- DONE!
+# Implement actions and changes -- DONE!
+# Create heuristic function -- DONE!
+# Calculate Utilities -- DONE!
 
 from games import *
 
@@ -83,6 +82,7 @@ class Othello7(Game):
         """Construct initial board.
         White pieces are using WHITE constant,
         while Black pieces use BLACK constant.
+        Empty spaces use EMPTY constant.
         """
         board = {}
 
@@ -99,15 +99,16 @@ class Othello7(Game):
 
         return board
 
-    def get_pos(self, state):
+    def get_pos(self, state, predict=False):
         """Helper function that returns the position
         of all state.to_move pieces in state.
         The return value is a list with all positions (x,y)
         of color pieces, which are the keys of the state dictionary.
         """
+        print("Starting getting position with prediction as", predict)
 
         pos = []
-        if state.to_move == BLACK:
+        if state.to_move == BLACK and not predict:
             obj = WHITE
         else:
             obj = BLACK
@@ -125,7 +126,9 @@ class Othello7(Game):
         >>> [N, NE, E, SE, S, SW, W, NW]
         Where N is North, and so on.
         """
+        print("Starting checking neighborhoods with objective", objective)
         neighborhood = []
+        print("I'm looking for neighborhood of", cell)
 
         board = self.current_state.board
 
@@ -182,9 +185,10 @@ class Othello7(Game):
     def check_empty_neigh(self, pos):
         """Check for empty neighbors of color pieces in
         the current state.
-        pos is a list of tuples (x,y) where color pieces
+        pos is a list of tuples (x,y) where pos pieces
         are located.
         """
+        print("Starting checking empty neighbors")
 
         empties = []
 
@@ -214,10 +218,13 @@ class Othello7(Game):
         print("I guess direction is {0}".format(direction))
         return direction
 
-    def check_direction(self, cell, direction, objective):
+    def check_direction(self, cell, direction, objective, steps=False):
         """Check direction of cell looking for objective.
         Returns true if objective is found, false otherwise.
+        If steps is true, return number of steps needed to find
+        objective in direction.
         """
+        print("Starting checking direction with step mode as", steps)
         not_found = True
         x = cell[0]
         y = cell[1]
@@ -238,40 +245,69 @@ class Othello7(Game):
             objective, mypiece))
         print("You should know mydir is", mydir)
 
-        while not_found:
-            # check there's room for search!
-            print("There's a {0} in this direction".format(
-                self.current_state.board[(x + mydir[0], y + mydir[1])]))
+        mysteps = []
 
-            # get value of cell in direction from cell
-            if self.current_state.board[(
-                    x + mydir[0], y + mydir[1])] == mypiece:
-                return True
-            elif self.current_state.board[(
+        print("Steps is set as", steps)
+
+        if not steps:
+            while not_found:
+                # check there's room for search!
+                print("There's a {0} in this direction".format(
+                    self.current_state.board[(x + mydir[0], y + mydir[1])]))
+
+                # get value of cell in direction from cell
+                if self.current_state.board[(
+                        x + mydir[0], y + mydir[1])] == mypiece:
+                    return True
+                elif self.current_state.board[(
+                        x + mydir[0], y + mydir[1])] == EMPTY:
+                    not_found = False
+                elif self.current_state.board[(
+                        x + mydir[0], y + mydir[1])] is None:
+                    not_found = False
+                # if its objective, return true
+                x = x + mydir[0]
+                y = y + mydir[1]
+
+                print('Now checking cell at {0}'.format((x, y)))
+        if steps:
+            print("I'm in the conditional now!")
+            while not_found:
+                #check there's room for search!
+                print("There's a {0} in this direction".format(
+                    self.current_state.board[(x + mydir[0], y + mydir[1])]))
+                # get value of cell in direction from cell
+                # if self.current_state.board[(
+                #         x + mydir[0], y + mydir[1])] == mypiece:
+                #     return True
+                if self.current_state.board[(
                     x + mydir[0], y + mydir[1])] == EMPTY:
-                not_found = False
-            elif self.current_state.board[(
+                        not_found = False
+                elif self.current_state.board[(
                     x + mydir[0], y + mydir[1])] is None:
-                not_found = False
-            # if its objective, return true
-            x = x + mydir[0]
-            y = y + mydir[1]
+                        not_found = False
+                # if its objective, return true
+                mysteps.append((x, y))
+                x = x + mydir[0]
+                y = y + mydir[1]
+                print("So far, mysteps is", mysteps)
+            return mysteps
 
-            print('Now checking cell at {0}'.format((x, y)))
 
         print("Then {0} is not valid".format(cell))
 
         return False
 
-    def validate_moves(self, empty):
+    def validate_moves(self, empty, predict=False):
         """Validates which cells are available to occupy.
         empty parameter is a list of empty spaces.
         """
+        print("Validating moves with prediction mode", predict)
         valid_moves = []
 
-        if self.current_state.to_move == BLACK:
+        if self.current_state.to_move == BLACK and not predict:
             obj = WHITE
-        elif self.current_state.to_move == WHITE:
+        else:
             obj = BLACK
 
         for each_empty in empty:
@@ -290,10 +326,67 @@ class Othello7(Game):
 
         return valid_moves
 
+    def change_board(self, state, move, predict=False, obj='opp'):
+        """Returns the new board, after a piece has been moved.
+        The return value should be the board, a dictionary that
+        maps (x,y) coordinates to players: WHITE or BLACK.
+        """
+        print("Starting changing board!")
+        board = state.board.copy()
+        print("The state is as follows")
+        self.display(state)
+        print(state.utility)
+        print("Prediction mode is", predict)
+
+        print("Letting you know that my move is", move)
+
+        board[move] = state.to_move # this
+
+        if state.to_move == BLACK and obj == 'opp':
+            obj = WHITE
+        elif state.to_move == WHITE or obj == 'mine':
+            obj = BLACK
+
+        print("My objective here is", obj)
+
+        # get adjacent whites, save their coords
+        obj_neighs = self.check_neighborhood(move, obj)
+
+        the_dirs = []
+
+        # get direction for each white, save their direction
+        for each_neigh in obj_neighs:
+            mydir = self.get_direction(move, each_neigh)
+            the_dirs.append(mydir)
+
+        changed_pieces = []
+
+        # for each white, go into its direction looking for state.to_move
+        for i in range(len(obj_neighs)):
+            changed_pieces = changed_pieces + self.check_direction(
+                obj_neighs[i], the_dirs[i], obj, steps=True)
+
+        # in each step, save its coords
+        # when you find your objective, stop searching
+        if not predict:
+            # turn all saved coords to state.to_move
+            for each_piece in changed_pieces:
+                board[each_piece] = state.to_move
+
+            print("I'm not in predict mode, and my board looks like",board)
+
+            # return new board
+            return board
+
+        elif predict:
+            return changed_pieces
+
+
     def actions(self, state):
         """Returns a list of the allowed moves at this point.
         state is a board, a list of lists?
         """
+        print("Starting getting actions!")
 
         acts = []  # meanwhile
 
@@ -310,23 +403,27 @@ class Othello7(Game):
 
     def result(self, state, move):
         """Returns the state resulting from making a move in state."""
+        print("Starting getting results!")
 
-        next_state = GameState(
-                to_move=(WHITE if state.to_move == BLACK else BLACK),
-                utility=self.compute_utility(board, move, state.to_move),
-                board=board, moves=moves)
+        moves = self.actions(state)
+        print("These are the moves I got", moves)
+        print("This is the move I was sent", move)
 
-        return next_state
+        board = self.change_board(state, move)
+
+        return GameState(
+            to_move=(WHITE if state.to_move == BLACK else BLACK),
+            utility=self.compute_utility(state, move), board=board, moves=moves)
 
     def utility(self, state, player):
         """Returns the value of this final state to player."""
+        print("Starting getting utility!")
 
-        value = 0  # meanwhile
-
-        return value
+        return state.utility if player == BLACK else -state.utility
 
     def terminal_test(self, state):
         """Returns True if this is a final state for the game."""
+        print("I'm starting terminal test")
 
         return not self.actions(state)
 
@@ -338,17 +435,67 @@ class Othello7(Game):
     def display(self, state):
         """Print or otherwise display the state."""
 
-        state = self.initial  # test
         for j in range(1, 9):
             line = []
             for i in range(1, 9):
-                line.append(state[i, j])
+                line.append(state.board[i, j])
             print(line)
+
+    def compute_utility(self, state, move):
+        """Compute utility for a given move.
+        This is the heuristic function used to determine
+        how is the player doing.
+        - Number of pieces is important.
+        - Number of available moves is also relevant
+        - Number of pieces that are gonna change with my move
+        - Number of dangerous places that I'm leaving
+        - Number of pieces changed in each dangerous place
+
+        h = my_pieces + my_moves + my_gains
+            - avg_of(dangerous_places * my_losses)
+        """
+        print('Im computing utilities for {0} and my move is {1}'.format(
+            state.to_move, move))
+
+        # count my pieces
+        my_pieces = len(self.get_pos(state, predict=True))
+
+        # count my available moves
+        my_moves = len(self.actions(state))
+
+        # count my gains
+        my_gains = 3 * len(self.change_board(state, move, predict=True))
+        
+        # count my dangerous places
+        # This should be seen as look for black checkers
+        # look for valid spots as white
+
+        opp_pos = self.get_pos(state)
+        print("Opp_pos is", opp_pos)
+        opp_empties = self.check_empty_neigh(self.get_pos(state, predict=True))
+        print("Opp_empties is", opp_empties)
+        opp_acts = self.validate_moves(opp_empties, predict=True)
+        print("Opp_acts are", opp_acts)
+        changed_mines = []
+        best_opp_move = 0
+        for each_act in opp_acts:
+            mypossiblechanged = len(self.change_board(state, each_act, predict=True, obj='mine'))
+            print("My possible changed is now", mypossiblechanged)
+            changed_mines.append(mypossiblechanged)
+            if mypossiblechanged > best_opp_move:
+                best_opp_move = mypossiblechanged
+            print("Best opp is", best_opp_move)
+            print("Changed mines are", changed_mines)
+        best_index = changed_mines.index(max(changed_mines))
+        opp_gains = len(self.change_board(state, opp_acts[best_index], predict=True, obj='mine'))
+
+        # This is the actual heuristic function
+        return my_pieces + my_moves + my_gains - (len(opp_acts) * opp_gains) / 2
 
     def __repr__(self):
         return '<%s>' % self.__class__.__name__
 
-
+# Instantiation
 othello = Othello7()
-
-print("Mah moves are", othello.actions(othello.current_state))
+# Testing of alphabeta_search. It works!
+alphabeta_search(othello.initial, othello)
