@@ -218,6 +218,7 @@ class Fig52Game(Game):
     initial = 'A'
 
     def actions(self, state):
+        print(list(self.succs.get(state, {}).keys()))
         return list(self.succs.get(state, {}).keys())
 
     def result(self, state, move):

@@ -1,4 +1,7 @@
 # Activity02
+# Intelligent Systems
+# 01170065 - Xavier Sánchez Díaz
+# 01299000 - Erim Sezer
 
 from lib import *   # This is the redblob games lib for hexagons!
 from collections import defaultdict
@@ -18,7 +21,7 @@ class Hexagon(Problem):
         self.grid = self.create_grid()
         self.initial = self.grid[initial]  # A string in the sense of 'A1'
         self.goal = self.name_to_hex(goal)
-        self.visited = []
+        self.visited = [self.initial]
         self.state = self.name_to_hex(initial)
         self.all_acts = ['L', 'BL', 'BR', 'R', 'TR', 'TL']
         print("Goal is", self.goal)
@@ -50,7 +53,7 @@ class Hexagon(Problem):
         grid['B4'] = Hex(2, -1, -1)
         grid['C1'] = Hex(-2, 2, 0)
         grid['C2'] = Hex(-1, 1, 0)
-        grid['C3'] = Hex(0, 0, 0)  # Center
+        grid['C3'] = Hex(0, 0, 0)  # Center of the grid map
         grid['C4'] = Hex(1, -1, 0)
         grid['C5'] = Hex(2, -2, 0)
         grid['D1'] = Hex(-2, 1, 1)
@@ -64,6 +67,10 @@ class Hexagon(Problem):
         return grid
 
     def print_path(self):
+        """
+        Prints the path till termination.
+        Not necessarily the shortest, of course.
+        """
         mah_path =[]
         for ea in self.visited:
             mah_path.append(self.hex_to_name(ea))
@@ -246,6 +253,7 @@ class Hexagon(Problem):
         """
         return [target.q, target.r, target.s]
 
+
     def hex_to_name(self, target):
         """
         Converts target from hex coordinates to human-readable name.
@@ -257,6 +265,7 @@ class Hexagon(Problem):
 
         return name
 
+
     def name_to_hex(self, target):
         """
         Converts human-readable hexagon to hexagonal coordinate system.
@@ -267,6 +276,7 @@ class Hexagon(Problem):
 
         return hexval
 
+
     def dir_to_number(self, target):
         """
         Change the name of an action to a number and returns the
@@ -274,7 +284,7 @@ class Hexagon(Problem):
         """
         print("Dir->num input:", target)
 
-        if target == 'TL':
+        if target == 'TR':
             my_dir = 0
         elif target == 'R':
             my_dir = 1
@@ -284,7 +294,7 @@ class Hexagon(Problem):
             my_dir = 3
         elif target == 'L':
             my_dir = 4
-        elif target == 'TR':
+        elif target == 'TL':
             my_dir = 5
 
         return my_dir
@@ -296,7 +306,7 @@ class Hexagon(Problem):
         """
 
         if target == 0:
-         my_dir = 'TL'
+         my_dir = 'TR'
         elif target == 1:
          my_dir = 'R'
         elif target == 2:
@@ -306,9 +316,10 @@ class Hexagon(Problem):
         elif target == 4:
          my_dir = 'L'
         elif target == 5:
-         my_dir = 'TR'
+         my_dir = 'TL'
 
         return my_dir
+
 
     def validate_action(self, action, state):
         """
@@ -338,7 +349,6 @@ class Hexagon(Problem):
         for house in neighborhood:
             hex_neighborhood.append((house[0],self.name_to_hex(house[1])))
 
-        
         print("I'm at validate action, neighborhood is:", neighborhood)
         print("my action is", my_action)
         valid_action = False
@@ -383,8 +393,10 @@ class Hexagon(Problem):
         print('End.')
 
 
-
 def main():
+    # Uncomment to try another cases, or replace 'C2' and 'C3'
+    # for some other values, from A1-3, B1-4, C1-5, D1-4 or E1-3.
+    
     prob = Hexagon('C2', 'C3')  # solvable
     # prob = Hexagon('A1', 'C3')
     # prob = Hexagon('A3', 'C3')
@@ -399,7 +411,6 @@ def main():
     # goal = depth_first_graph_search(prob)
     
     # goal = astar_search(prob) # throws exception
-
 
 
 if __name__ == '__main__':
