@@ -21,7 +21,8 @@ The basic algorithm proposed by Karaboga in 2005 is something like this:
 
 from math import e, sin
 from names import *
-from random import  *
+from random import *
+
 
 class Bee(object):
     """This is the Bee class.
@@ -35,7 +36,7 @@ class Bee(object):
     - a patch where the bee stands
     """
     def __init__(self, name):
-        self.name = name + "_" + str(randint(0,100))
+        self.name = name + "_" + str(randint(0, 100))
         self.a0 = None
         self.a1 = None
         self.a2 = None
@@ -52,16 +53,16 @@ class Bee(object):
 
     def evaluate(self):
         """Evaluate this bee's position"""
-        
+
         myeval = []
         mya0 = self.a0
         mya1 = self.a1
         mya2 = self.a2
         mya3 = self.a3
 
-        for (x,y) in data:
+        for (x, y) in data:
             myeval.append(heur(x, mya0, mya1, mya2, mya3))
-        
+
         myminimize = []
 
         for i in range(len(data)):
@@ -117,10 +118,10 @@ def assign_location(beehive, ref=None):
     """
     if ref is None:
         for bee in beehive:
-            bee.a0 = randint(0,15)
-            bee.a1 = randint(0,15)
-            bee.a2 = randint(0,15)
-            bee.a3 = randint(0,15)
+            bee.a0 = randint(0, 15)
+            bee.a1 = randint(0, 15)
+            bee.a2 = randint(0, 15)
+            bee.a3 = randint(0, 15)
     else:
         refa0 = ref.a0
         refa1 = ref.a1
@@ -133,11 +134,12 @@ def assign_location(beehive, ref=None):
             bee.a2 = randint(refa2 - ngh, refa2 + ngh)
             bee.a3 = randint(refa3 - ngh, refa3 + ngh)
 
+
 def val_to_bee(val):
     """Look for value in existing bee groups.
     If value is found, then return the bee.
     Else, return False"""
-    
+
     found = False
 
     for bee in hive:
@@ -157,10 +159,11 @@ def print_group(group):
     for bee in group:
         print(bee)
 
+
 def bees_to_patches(group):
     """Helper function that returns a list of length n,
     where n is the number of patches present in the group"""
-    
+
     known_patches = []
     patches = []
 
@@ -224,7 +227,7 @@ while iterations < max_iterations:
     for i in elite_evals:
         bee = val_to_bee(i)
         elite_bees.append(bee)
-        bee.patch = get_first_name(gender='male') + "_" + str(randint(0,100))
+        bee.patch = get_first_name(gender='male') + "_" + str(randint(0, 100))
 
     print("================\n"
           "Elite bees are:")
@@ -245,7 +248,7 @@ while iterations < max_iterations:
     for i in patches_evals:
         bee = val_to_bee(i)
         patches_bees.append(bee)
-        bee.patch = get_first_name(gender='male') + "_" + str(randint(0,100))
+        bee.patch = get_first_name(gender='male') + "_" + str(randint(0, 100))
 
     print("================\n"
           "Patches bees are:")
@@ -258,9 +261,9 @@ while iterations < max_iterations:
         work_group = create_bees(ne)  # I've created ne bees
         assign_location(work_group, bee)
         for new_bee in work_group:
-            new_bee.patch = bee.patch # Added each new_bee to its patch
+            new_bee.patch = bee.patch  # Added each new_bee to its patch
             new_bee.evaluate()  # Added evaluation for each new_bee
-        elite_bees = elite_bees + work_group # Added all new_bees to elite_bees
+        elite_bees = elite_bees + work_group  # Added new_bees to elite_bees
         hive = hive + work_group  # And also to the bee count!
 
     print("================\n"
@@ -274,9 +277,9 @@ while iterations < max_iterations:
         work_group = create_bees(nnp)  # I've created nnp bees
         assign_location(work_group, bee)
         for new_bee in work_group:
-            new_bee.patch = bee.patch # Added each new_bee to its patch
+            new_bee.patch = bee.patch  # Added each new_bee to its patch
             new_bee.evaluate()  # Added evaluation for each new_bee
-        patches_bees = patches_bees + work_group # Added them to patches_bees
+        patches_bees = patches_bees + work_group  # Added them to patches_bees
         hive = hive + work_group  # And also to the bee count!
 
     print("================\n"
