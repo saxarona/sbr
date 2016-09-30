@@ -41,7 +41,7 @@ class Bee(object):
         self.a1 = None
         self.a2 = None
         self.a3 = None
-        self.eval = 1000
+        self.eval = 10000
         self.patch = None
 
     def __str__(self):
@@ -138,7 +138,8 @@ def assign_location(beehive, ref=None):
 def val_to_bee(val):
     """Look for value in existing bee groups.
     If value is found, then return the bee.
-    Else, return False"""
+    Else, return False
+    """
 
     found = False
 
