@@ -22,6 +22,7 @@ The basic algorithm proposed by Karaboga in 2005 is something like this:
 from math import e, sin
 from names import *
 from random import *
+from copy import deepcopy
 
 
 class Bee(object):
@@ -328,7 +329,7 @@ while iterations < max_iterations:
         aux_list.append(bee.eval)
 
     best_val = min(aux_list)
-    best_bee = val_to_bee(best_val)
+    best_bee = deepcopy(val_to_bee(best_val))
 
     if best_bee_ever.eval is None or best_bee.eval < best_bee_ever.eval:
         best_bee_ever = best_bee
