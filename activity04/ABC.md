@@ -23,7 +23,7 @@ The algorithm is as follows:
 Process seems easier to understand as the slides suggest:
 
 1. Initialize `n` scout bees with a random search and evaluate their aptitude.
-2. Select m best sites for a neighbor-search.
+2. Select `m` best sites for a neighbor-search.
 3. Select `e` sites for elite patches, such that `e` < `m`.
 4. Select `m` - `e` sites for normal patches.
 5. Determine patch-size, usually denoted as `ngh`.
@@ -32,7 +32,7 @@ Process seems easier to understand as the slides suggest:
     - `some` for elite patches
     - `some_more` for normal patches, such that `some` > `some_more`
 8. Select bee with best evaluation for each patch.
-9. Asign `n` - `m` bees to randomly search again.
+9. Assign `n` - `m` bees to randomly search again.
 10. Select bee with best evaluation this iteration, and GOTO 6.
 
 [abc]: http://www-lia.deis.unibo.it/Courses/SistInt/articoli/bee-colony1.pdf
