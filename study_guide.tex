@@ -1,0 +1,233 @@
+\documentclass[titlepage, letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{extramarks}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{tcolorbox}
+\usepackage{gensymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{caption}
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+\setlength{\parskip}{1ex}
+\setlength{\parindent}{0ex}
+
+%
+% You should change this things~
+%
+
+\newcommand{\mahclass}{Sistemas de Búsqueda y Razonamiento}
+\newcommand{\mahtitle}{Guía de Estudio}
+\newcommand{\mahdate}{\today}
+\newcommand{\spacepls}{\vspace{5mm}}
+
+%
+% Header markings
+%
+
+\pagestyle{fancy}
+\lhead{Guía de Estudio}
+\chead{}
+\rhead{}
+\lfoot{}
+\rfoot{}
+
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+\renewcommand{\familydefault}{\sfdefault} %The sans-serif font and the like
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solución}}
+
+%Alias for the new step section
+\newcommand{\steppy}[1]{\textbf{\large #1}}
+
+%
+% My actual info
+%
+
+\title{
+\vspace{1in}
+\textbf{Tecnológico de Monterrey} \\
+\vspace{0.5in}
+\textmd{\mahclass} \\
+\vspace{0.5in}
+\textsc{\mahtitle}
+\author{01170065  - MIT \\
+Xavier Fernando Cuauhtémoc Sánchez Díaz \\
+\texttt{xavier.sanchezdz@gmail.com}}
+\date{\mahdate}
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+
+%
+% Actual document starts here~
+%
+
+\section{Metaheurísticas}
+
+Una heurística es una estrategia que \textit{guía} el proceso de búsqueda del óptimo.
+Su objetivo es explorar de manera eficiente el espacio de búsqueda encontrando soluciones óptimas o cercanas a las óptimas.
+
+Las heurísticas son usualmente específicas para un tipo de problema en cuestión, y explotan las particularidades de cada problema.
+Son algoritmos aproximados y generalmente no son deterministas.
+
+Las metaheurísticas no son específicas a los problemas,
+e incorporan algún tipo de memoria para guiar la búsqueda hacia óptimos globales.
+
+Las metaheurísticas son de naturaleza estocástica, adaptables y fácilmente paralelizables.
+
+\subsection{Ant Colony Optimization} % (fold)
+\label{sub:ants}
+
+Se basan en el comportamiento natural de las hormigas:
+\begin{tcolorbox}
+\begin{enumerate}
+    \item Las hormigas vagan libremente, buscando una solución.
+    \item Al encontrar una solución, regresan al hormiguero y dejan marcado el camino.
+    \item El camino atrae a más hormigas, quienes de manera estocástica deciden si siguen un camino más corto o el camino de antes.
+\end{enumerate}
+Al final, todos los caminos convergen en una solución aproximada muy cercana a la óptima.
+\end{tcolorbox}
+
+Los tipos de problema a los que se aplica son de agente viajero, asignación cuadrática, programación de tareas o satisfacción de restricciones.
+
+Cada hormiga tiene un componente de probabilidad de transición, un rastro de feromona, un nivel de visión de los caminos, memoria (o conjunto tabú) y coeficientes de la importancia de escoger un camino corto o un camino atractivo.
+
+\begin{equation}
+\label{eq:ant_transition}
+p^k_{ij}(t) =
+\begin{cases}
+\dfrac{[\tau_{ij}(t)]^{\alpha}[\eta_{ij}]^{\beta}}{\sum_{k \in \text{allowed}}[\tau_{ik}(t)]^{\alpha}[\eta_{ik}]^{\beta}}, & j \in \text{allowed}_k \\[2ex]
+0, & j \not \in \text{allowed}_k
+\end{cases}
+\end{equation}
+
+\begin{equation}
+\label{eq:ant_pheromone}
+    \tau_{ij}(t)
+\end{equation}
+
+\begin{equation}
+\label{eq:ant_visibility}
+\eta_{ij} = \dfrac{1}{d_{ij}}
+\end{equation}
+
+La Ecuación \ref{eq:ant_transition} es para calcular la \textbf{probabilidad de transición} para cada ciudad.
+Ecuación~\ref{eq:ant_pheromone} representa el cálculo de feromonas para el tiempo $t$.
+La Ecuación~\ref{eq:ant_visibility} representa la visibilidad de una ciudad dependiendo de la distancia a la que se encuentre.
+$\alpha, \beta$ son los parámetros de cuán importante es seguir una ciudad atractiva (con feromonas) o una ciudad visible, respectivamente.
+
+Específicamente, el rastro de feromonas se actualiza de este modo:
+
+\begin{equation}
+\label{eq:ant_phero_update_global}
+    \tau_{ij}(t+n) = \rho \tau_{ij} + \Delta \tau_{ij}
+\end{equation}
+
+Donde $\rho$ es el parámetro de evaporación de la feromona, y $\Delta\tau_{ij} = \Delta\tau^1_{ij} + \Delta\tau^2_{ij} + \dots + \Delta\tau^m_{ij}$ representa los cambios de feromonas entre dos ciudades $i,j$ para las $m$ hormigas.
+
+Este rastro entre dos ciudades se calcula usando la siguiente ecuación:
+
+\begin{equation}
+\label{eq:ant_phero_update_p_ant}
+\Delta\tau^k_{i,j} =
+\begin{cases}
+\dfrac{Q}{L_k}, & (i,j) \in \text{tour}_k \\[2ex]
+0, & (i,j) \not \in \text{tour}_k
+\end{cases}
+\end{equation}
+
+donde $Q$ es el parámetro de cuánta feromona se agrega por hormiga al pasar, y $L_k$ es la longitud del tour de la $k$-ésima hormiga.
+
+El criterio de paro para un algoritmo de hormigas puede ser estancamiento (muchas iteraciones sin mejora), o bien llegar a un número límite de iteraciones.
+
+\subsection{Artificial Bee Colony} % (fold)
+\label{sub:bees}
+
+Así como las hormigas, la colonia artificial de abejas se basa en el comportamiento habitual de estos insectos.
+A diferencia de las hormigas, que construyen la solución poco a poco, cada abeja representa una solución.
+
+El algoritmo es básicamente el siguiente:
+
+\begin{tcolorbox}
+\begin{enumerate}
+    \item Se generan $n$ abejas exploradoras con soluciones aleatorias.
+    \item Se evalúa la aptitud de cada una
+    \item Se seleccionan $m$ mejores abejas y $e$ abejas sobresalientes para buscar en los alrededores, ($e < m$).
+    \item Se envían $p$ abejas para cada uno de los $m$ sitios, y $q$ abejas para cada uno de los $e$ sitios.
+    \item Se selecciona la mejor abeja de cada uno de los $m+e$ sitios.
+    \item Se agregan $n-m$ abejas nuevas de manera aleatoria.
+    \item Repetir desde 3, mientras no se alcance criterio de paro.
+\end{enumerate}
+
+Este proceso se repite hasta que se alcance el criterio de paro: un número máximo de iteraciones o bien estancamiento de la solución.
+\end{tcolorbox}
+
+Es importante determinar un tamaño máximo de vecindario, para enviar a las abejas que van a los $m,e$ sitios a buscar CERCA de donde estaban las demás abejas.
+Este parámetro suelen llamarlo \textbf{ngh}, apócope de \textit{neighborhood}.
+
+Este algoritmo encuentra soluciones óptimas y supera el problema de quedar estancado en óptimos locales.
+Sin embargo al igual que con las hormigas, hay muchos parámetros que deben ajustarse manualmente.
+
+\subsection{Particle Swarm Optimization} % (fold)
+\label{sub:pso}
+
+El algoritmo de optimización de enjambre de partículas es también bio-inspirado, pero esta vez en aves migratorias.
+
+Pensado para un espacio $n$-dimensional, cada partícula (o cada pato) tiene una \textbf{velocidad} y una \textbf{posición}, y es tratada como un vector.
+Cada individuo recuerda la mejor posición en la que ha estado, y sabe la mejor posición que han visitado sus vecinos más próximos.
+
+Tras crear y posicionar aleatoriamente a la parvada, el algoritmo es básicamente el siguiente:
+
+\begin{tcolorbox}
+\begin{enumerate}
+    \item Calcular la aptitud de cada partícula.
+    \item Actualizar el mejor personal (\textbf{pbest}) si su posición actual es mejor que lo que recuerda.
+    \item Escoger a la partícula con la mejor aptitud.
+    \item Calcular la nueva velocidad de todas las partículas.
+    \item Calcular la nueva posición de todas las partículas.
+    \item Repetir todo mientras no se alcance un criterio de paro.
+\end{enumerate}
+\end{tcolorbox}
+
+Es importante mencionar que el tamaño del vecindario debe ser previamente definido.
+
+La ecuación para actualizar la velocidad de una partícula es la siguiente:
+
+\begin{equation}
+\label{eq:pso_velocity}
+v_i = c_0 \times v_i + c_1 \times R \times (B_i - P_i) + c_2 \times R \times (G - P_i)
+\end{equation}
+
+Donde $c_0, c_1, c_2$ son coeficientes de cuán importante es la velocidad $v$, la mejor posición personal $B_i$ y la mejor posición grupal $G$, respectivamente.
+$R$ es un número aleatorio entre 0 y 1.
+
+La ecuación para actualizar la posición de una partícula es:
+
+\begin{equation}
+\label{eq:pso_position}
+P_i = P_i + v_i
+\end{equation}
+
+Donde $P_i$ es la posición actual, y $v_i$ es la velocidad recién calculada.
+
+De manera empírica se ha comprobado que cuando la suma de $c_1 + c_2 = 4$ se alcanzan buenos resultados.
+De igual manera, hay que limitar el movimiento máximo de una partícula o podría pasar por alto algunas soluciones importantes, por lo que existe un parámetro $v_{max}$.
+Valores muy altos o muy bajos de $v_{max}$ pueden afectar la rapidez de convergencia o bien afectar la optimalidad de los resultados.
+\end{document}
